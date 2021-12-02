@@ -3,12 +3,13 @@
 	using System;
 	using System.Collections.Generic;
 	using System.IO;
-	using SmartyStreets;
+    using System.Threading.Tasks;
+    using SmartyStreets;
 	using SmartyStreets.USReverseGeoApi;
 
 	internal static class USReverseGeoExample
 	{
-		public static void Run()
+		public static async Task RunAsync()
 		{
 			// var authId = "Your SmartyStreets Auth ID here";
 			// var authToken = "Your SmartyStreets Auth Token here";
@@ -20,7 +21,7 @@
 			// The appropriate license values to be used for your subscriptions
 			// can be found on the Subscriptions page the account dashboard.
 			// https://www.smartystreets.com/docs/cloud/licensing
-			var client = new ClientBuilder(authId, authToken).WithLicense(new List<string>{"us-reverse-geocoding-cloud"})
+			var client = new ClientBuilder(new System.Net.Http.HttpClient(), authId, authToken).WithLicense(new List<string>{"us-reverse-geocoding-cloud"})
 				//.WithCustomBaseUrl("us-street-reverse-geo.api.smartystreets.com")
 				//.ViaProxy("http://localhost:8080", "username", "password") // uncomment this line to point to the specified proxy.
 				.BuildUsReverseGeoApiClient();
@@ -32,16 +33,18 @@
 
 			try
 			{
-				client.Send(lookup);
+				await client.SendAsync(lookup);
 			}
 			catch (SmartyException ex)
 			{
 				Console.WriteLine(ex.Message);
 				Console.WriteLine(ex.StackTrace);
+				return;
 			}
 			catch (IOException ex)
 			{
 				Console.WriteLine(ex.StackTrace);
+				throw;
 			}
 
 			var results = lookup.SmartyResponse.Results;

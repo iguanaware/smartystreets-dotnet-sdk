@@ -3,6 +3,7 @@
 namespace SmartyStreets
 {
     using System;
+    using System.Net.Http;
 
     /// <summary>
     ///     The ClientBuilder class helps you build a client object for one of the supported SmartyStreets APIs.
@@ -18,6 +19,7 @@ namespace SmartyStreets
         private TimeSpan maxTimeout;
         private string urlPrefix;
         private readonly ICredentials signer;
+        private readonly HttpClient httpClient;
         private ISerializer serializer;
         private ISender httpSender;
         private Proxy proxy;
@@ -32,20 +34,21 @@ namespace SmartyStreets
         private const string UsZipCodeApiUrl = "https://us-zipcode.api.smartystreets.com/lookup";
         private const string UsReverseGeoApiUrl = "https://us-reverse-geo.api.smartystreets.com/lookup";
 
-        public ClientBuilder()
+        public ClientBuilder(System.Net.Http.HttpClient httpClient)
         {
             this.maxRetries = 5;
             this.maxTimeout = TimeSpan.FromSeconds(10);
             this.serializer = new NativeSerializer();
             this.licenses = new List<string>();
+            this.httpClient = httpClient;
         }
 
-        public ClientBuilder(ICredentials signer) : this()
+        public ClientBuilder(System.Net.Http.HttpClient httpClient, ICredentials signer) : this(httpClient)
         {
             this.signer = signer;
         }
 
-        public ClientBuilder(string authId, string authToken) : this(new StaticCredentials(authId, authToken))
+        public ClientBuilder(System.Net.Http.HttpClient httpClient, string authId, string authToken) : this(httpClient, new StaticCredentials(authId, authToken))
         {
         }
 
@@ -76,7 +79,7 @@ namespace SmartyStreets
             this.urlPrefix = baseUrl;
             return this;
         }
-        
+
         /// <remarks>Use this to add any additional headers you need.</remarks>
         /// <param name="headers">A Dictionary<string, string> of header name/value pairs.</param>
         /// <returns>Returns 'this' to accommodate method chaining.</returns>
@@ -135,8 +138,8 @@ namespace SmartyStreets
             this.EnsureURLPrefixNotNull(InternationalStreetApiUrl);
             return new InternationalStreetApi.Client(this.BuildSender(), this.serializer);
         }
-        
-public InternationalAutocompleteApi.Client BuildInternationalAutocompleteApiClient()
+
+        public InternationalAutocompleteApi.Client BuildInternationalAutocompleteApiClient()
         {
             this.EnsureURLPrefixNotNull(InternationalAutocompleteApiUrl);
             return new InternationalAutocompleteApi.Client(this.BuildSender(), this.serializer);
@@ -183,9 +186,9 @@ public InternationalAutocompleteApi.Client BuildInternationalAutocompleteApiClie
             if (this.httpSender != null)
                 return this.httpSender;
 
-            ISender sender = new NativeSender(this.maxTimeout, this.proxy);
+            ISender sender = new NativeSender(this.httpClient);
             sender = new StatusCodeSender(sender);
-            
+
             if (this.customHeaders != null)
                 sender = new CustomHeaderSender(this.customHeaders, sender);
 
@@ -196,7 +199,7 @@ public InternationalAutocompleteApi.Client BuildInternationalAutocompleteApiClie
 
             if (this.maxRetries > 0)
                 sender = new RetrySender(this.maxRetries, sender);
-            
+
             sender = new LicenseSender(this.licenses, sender);
 
             return sender;

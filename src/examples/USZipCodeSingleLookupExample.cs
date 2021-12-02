@@ -13,7 +13,7 @@
 			// You don't have to store your keys in environment variables, but we recommend it.
 			var authId = Environment.GetEnvironmentVariable("SMARTY_AUTH_ID");
 			var authToken = Environment.GetEnvironmentVariable("SMARTY_AUTH_TOKEN");
-			var client = new ClientBuilder(authId, authToken).BuildUsZipCodeApiClient();
+			var client = new ClientBuilder(new System.Net.Http.HttpClient(), authId, authToken).BuildUsZipCodeApiClient();
 			
 			// Documentation for input fields can be found at:
 			// https://smartystreets.com/docs/us-zipcode-api#input-fields

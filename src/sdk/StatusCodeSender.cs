@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 
 namespace SmartyStreets
 {
@@ -11,9 +12,9 @@ namespace SmartyStreets
 			this.inner = inner;
 		}
 
-		public async Task<Response> SendAsync(Request request)
+		public async Task<Response> SendAsync(Request request, CancellationToken token = default(CancellationToken))
 		{
-			var response = await this.inner.SendAsync(request);
+			var response = await this.inner.SendAsync(request, token);
 
 			switch (response.StatusCode)
 			{

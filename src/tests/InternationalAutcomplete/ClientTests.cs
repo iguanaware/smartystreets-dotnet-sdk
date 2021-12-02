@@ -1,120 +1,121 @@
 ﻿namespace SmartyStreets.InternationalAutocompleteApi
 {
-	using System;
-	using System.Text;
-	using NUnit.Framework;
+    using System;
+    using System.Text;
+    using System.Threading.Tasks;
+    using NUnit.Framework;
 
-	[TestFixture]
-	public class ClientTests
-	{
-		private RequestCapturingSender capturingSender;
-		private URLPrefixSender urlSender;
+    [TestFixture]
+    public class ClientTests
+    {
+        private RequestCapturingSender capturingSender;
+        private URLPrefixSender urlSender;
 
-		[SetUp]
-		public void Setup()
-		{
-			this.capturingSender = new RequestCapturingSender();
-			this.urlSender = new URLPrefixSender("http://localhost/", this.capturingSender);
-		}
+        [SetUp]
+        public void Setup()
+        {
+            this.capturingSender = new RequestCapturingSender();
+            this.urlSender = new URLPrefixSender("http://localhost/", this.capturingSender);
+        }
 
-		#region [ Single Lookup ]
+        #region [ Single Lookup ]
 
-		[Test]
-		public void TestSendingSinglePrefixOnlyLookup()
-		{
-			var serializer = new FakeSerializer(new byte[0]);
-			var client = new Client(this.urlSender, serializer);
+        [Test]
+        public async Task TestSendingSinglePrefixOnlyLookup()
+        {
+            var serializer = new FakeSerializer(new byte[0]);
+            var client = new Client(this.urlSender, serializer);
 
-			client.Send(new Lookup("1"));
+            await client.SendAsync(new Lookup("1"));
 
-			Assert.AreEqual("http://localhost/?search=1",
-				this.capturingSender.Request.GetUrl());
-		}
+            Assert.AreEqual("http://localhost/?search=1",
+                this.capturingSender.Request.GetUrl());
+        }
 
-		[Test]
-		public void TestSendingSingleFullyPopulatedLookup()
-		{
-			var serializer = new FakeSerializer(new byte[0]);
-			var client = new Client(this.urlSender, serializer);
-			const string expectedURL =
-				"http://localhost/?search=1&country=2&max_results=3&include_only_administrative_area=4&include_only_locality=5&include_only_postal_code=6";
-			var lookup = new Lookup
-			{
-				Search = "1",
-				Country = "2",
-				MaxResults = 3,
-				AdministrativeArea = "4",
-				Locality = "5",
-				PostalCode = "6",
-			};
-			
-			client.Send(lookup);
+        [Test]
+        public async Task TestSendingSingleFullyPopulatedLookup()
+        {
+            var serializer = new FakeSerializer(new byte[0]);
+            var client = new Client(this.urlSender, serializer);
+            const string expectedURL =
+                "http://localhost/?search=1&country=2&max_results=3&include_only_administrative_area=4&include_only_locality=5&include_only_postal_code=6";
+            var lookup = new Lookup
+            {
+                Search = "1",
+                Country = "2",
+                MaxResults = 3,
+                AdministrativeArea = "4",
+                Locality = "5",
+                PostalCode = "6",
+            };
 
-			Assert.AreEqual(expectedURL, this.capturingSender.Request.GetUrl());
-		}
+            await client.SendAsync(lookup);
 
-		#endregion
+            Assert.AreEqual(expectedURL, this.capturingSender.Request.GetUrl());
+        }
 
-		#region [ Response Handling ]
+        #endregion
 
-		[Test]
-		public void TestDeserializeCalledWithResponseBody()
-		{
-			var response = new Response(0, Encoding.ASCII.GetBytes("Hello, World!"));
-			var mockSender = new MockSender(response);
-			var sender = new URLPrefixSender("http://localhost/", mockSender);
-			var deserializer = new FakeDeserializer(new Result());
-			var client = new Client(sender, deserializer);
+        #region [ Response Handling ]
 
-			client.Send(new Lookup("1"));
+        [Test]
+        public async Task TestDeserializeCalledWithResponseBody()
+        {
+            var response = new Response(0, Encoding.ASCII.GetBytes("Hello, World!"));
+            var mockSender = new MockSender(response);
+            var sender = new URLPrefixSender("http://localhost/", mockSender);
+            var deserializer = new FakeDeserializer(new Result());
+            var client = new Client(sender, deserializer);
 
-			Assert.AreEqual(response.Payload, deserializer.Payload);
-		}
+            await client.SendAsync(new Lookup("1"));
 
-		[Test]
-		public void TestRejectNullLookup()
-		{
-			var serializer = new FakeSerializer(null);
-			var client = new Client(this.urlSender, serializer);
+            Assert.AreEqual(response.Payload, deserializer.Payload);
+        }
 
-			Assert.Throws<ArgumentNullException>(() => client.Send(null));
-		}
+        [Test]
+        public void TestRejectNullLookup()
+        {
+            var serializer = new FakeSerializer(null);
+            var client = new Client(this.urlSender, serializer);
 
-		[Test]
-		public void TestRejectNullPrefix()
-		{
-			var serializer = new FakeSerializer(null);
-			var client = new Client(this.urlSender, serializer);
+            Assert.Throws<ArgumentNullException>(() => client.SendAsync(null).GetAwaiter().GetResult());
+        }
 
-			Assert.Throws<SmartyException>(() => client.Send(new Lookup()));
-		}
+        [Test]
+        public void TestRejectNullPrefix()
+        {
+            var serializer = new FakeSerializer(null);
+            var client = new Client(this.urlSender, serializer);
 
-		[Test]
-		public void TestRejectEmptyPrefix()
-		{
-			var serializer = new FakeSerializer(null);
-			var client = new Client(this.urlSender, serializer);
+            Assert.Throws<SmartyException>(() => client.SendAsync(new Lookup()).GetAwaiter().GetResult());
+        }
 
-			Assert.Throws<SmartyException>(() => client.Send(new Lookup("")));
-		}
+        [Test]
+        public void TestRejectEmptyPrefix()
+        {
+            var serializer = new FakeSerializer(null);
+            var client = new Client(this.urlSender, serializer);
+
+            Assert.Throws<SmartyException>(() => client.SendAsync(new Lookup("")).GetAwaiter().GetResult());
+        }
 
 
-		[Test]
-		public void TestResultCorrectlyAssignedToLookup()
-		{
-			var lookup = new Lookup("1");
-			var expectedResult = new Result();
+        [Test]
+        public async Task TestResultCorrectlyAssignedToLookup()
+        {
+            var lookup = new Lookup("1");
+            var expectedResult = new Result();
 
-			var mockSender = new MockSender(new Response(0, Encoding.ASCII.GetBytes("{[]}")));
-			var sender = new URLPrefixSender("http://localhost/", mockSender);
-			var deserializer = new FakeDeserializer(expectedResult);
-			var client = new Client(sender, deserializer);
+            var mockSender = new MockSender(new Response(0, Encoding.ASCII.GetBytes("{[]}")));
+            var sender = new URLPrefixSender("http://localhost/", mockSender);
+            var deserializer = new FakeDeserializer(expectedResult);
+            var client = new Client(sender, deserializer);
 
-			client.Send(lookup);
+            await client.SendAsync(lookup);
 
-			Assert.AreEqual(expectedResult.Candidates, lookup.Result);
-		}
+            Assert.AreEqual(expectedResult.Candidates, lookup.Result);
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

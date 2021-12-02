@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 
 namespace SmartyStreets
 {
@@ -6,11 +7,11 @@ namespace SmartyStreets
 	{
 		public Request Request { get; private set; }
 
-		public async Task<Response> SendAsync(Request request)
+		public Task<Response> SendAsync(Request request, CancellationToken token)
 		{
 			this.Request = request;
 
-			return new Response(200, new byte[0]);
+			return Task.FromResult(new Response(200, new byte[0]));
 		}
 	}
 }

@@ -17,7 +17,7 @@
 			// The appropriate license values to be used for your subscriptions
 			// can be found on the Subscriptions page the account dashboard.
 			// https://www.smartystreets.com/docs/cloud/licensing
-			var client = new ClientBuilder(authId, authToken).WithLicense(new List<string>{"international-global-plus-cloud"})
+			var client = new ClientBuilder(new System.Net.Http.HttpClient(), authId, authToken).WithLicense(new List<string>{"international-global-plus-cloud"})
 				.BuildInternationalStreetApiClient();
 			
 			// Documentation for input fields can be found at:

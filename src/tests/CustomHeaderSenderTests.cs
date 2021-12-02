@@ -3,12 +3,13 @@
 namespace SmartyStreets
 {
     using NUnit.Framework;
+    using System.Threading.Tasks;
 
     [TestFixture]
     public class CustomHeaderSenderTests
     {
         [Test]
-        public void TestAddingHeaders()
+        public async Task TestAddingHeaders()
         {
             var headers = new Dictionary<string, string>
             {
@@ -20,7 +21,7 @@ namespace SmartyStreets
             var urlPrefixSender = new URLPrefixSender("http://localhost/", mockSender);
             var sender = new CustomHeaderSender(headers, urlPrefixSender);
 
-            sender.Send(new Request());
+            await sender.SendAsync(new Request());
 
             Assert.AreEqual("value1", mockSender.Request.Headers["Test1"]);
             Assert.AreEqual("value2", mockSender.Request.Headers["Test2"]);

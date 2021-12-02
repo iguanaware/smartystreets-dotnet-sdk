@@ -1,6 +1,7 @@
 ﻿namespace SmartyStreets
 {
 	using System.IO;
+    using System.Threading;
     using System.Threading.Tasks;
 
     public class MockCrashingSender : ISender
@@ -17,7 +18,7 @@
 			this.SendCount = 0;
 		}
 
-		public async Task<Response> SendAsync(Request request)
+		public Task<Response> SendAsync(Request request, CancellationToken token)
 		{
 			this.SendCount++;
 
@@ -28,7 +29,7 @@
 			if (request.GetUrl().Contains(RetryMaxTimes))
 				throw new IOException("Retrying won't help");
 
-			return new Response(StatusCode, new byte[] {});
+			return Task.FromResult(new Response(StatusCode, new byte[] {}));
 		}
 	}
 }

@@ -28,7 +28,7 @@ Module Module1
         End With
  
         Try
-            client.Send(myLookup)
+            await client.SendAsync(myLookup)
         Catch ex As SmartyException
             Console.WriteLine(ex.Message)
             Console.WriteLine(ex.StackTrace)

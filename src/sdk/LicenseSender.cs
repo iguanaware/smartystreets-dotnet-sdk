@@ -3,6 +3,8 @@ namespace SmartyStreets
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
 
     public class LicenseSender : ISender
     {
@@ -15,10 +17,10 @@ namespace SmartyStreets
             this.inner = inner;
         }
 
-        public Response Send(Request request)
+        public async Task<Response> SendAsync(Request request, CancellationToken token = default(CancellationToken))
         {
             request.SetParameter("license", String.Join(",", this.licenses));
-            return this.inner.Send(request);
+            return await this.inner.SendAsync(request, token);
         }
     }
 }

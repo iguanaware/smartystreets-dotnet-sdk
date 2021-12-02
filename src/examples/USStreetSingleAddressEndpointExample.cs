@@ -3,12 +3,13 @@
 	using System;
 	using System.Collections.Generic;
 	using System.IO;
-	using SmartyStreets;
+    using System.Threading.Tasks;
+    using SmartyStreets;
 	using SmartyStreets.USStreetApi;
 
 	internal static class USStreetSingleAddressEndpointExample
 	{
-		public static void Run()
+		public static async Task Run()
 		{
 			// var authId = "Your SmartyStreets Auth ID here";
 			// var authToken = "Your SmartyStreets Auth Token here";
@@ -20,7 +21,7 @@
 			// The appropriate license values to be used for your subscriptions
 			// can be found on the Subscriptions page the account dashboard.
 			// https://www.smartystreets.com/docs/cloud/licensing
-			var client = new ClientBuilder(authId, authToken).WithLicense(new List<string>{"us-rooftop-geocoding-cloud"})
+			var client = new ClientBuilder(new System.Net.Http.HttpClient(), authId, authToken).WithLicense(new List<string>{"us-rooftop-geocoding-cloud"})
 				// NOTE: this is how to point the SDK at an alternate installation
 				// for example, this might be used to connect through "stunnel" to handle things like TLSv1.2 encryption
 				.WithCustomBaseUrl("http://127.0.0.1:8080/street-address") // point to local installation
@@ -48,7 +49,7 @@
 
 			try
 			{
-				client.Send(lookup);
+				await client.SendAsync(lookup);
 			}
 			catch (SmartyException ex)
 			{

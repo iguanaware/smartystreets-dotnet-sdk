@@ -2,12 +2,13 @@
 {
 	using System;
 	using System.Collections.Generic;
-	using SmartyStreets;
+    using System.Threading.Tasks;
+    using SmartyStreets;
 	using SmartyStreets.USAutocompleteProApi;
 
 	internal static class USAutocompleteProExample
 	{
-		public static void Run()
+		public static async Task RunAsync()
 		{
 			// We recommend storing your secret keys in environment variables.
 			var key = Environment.GetEnvironmentVariable("SMARTY_AUTH_WEB");
@@ -17,13 +18,13 @@
             // The appropriate license values to be used for your subscriptions
             // can be found on the Subscriptions page the account dashboard.
             // https://www.smartystreets.com/docs/cloud/licensing
-			var client = new ClientBuilder(credentials).WithLicense(new List<string>{"us-autocomplete-pro-cloud"})
+			var client = new ClientBuilder(new System.Net.Http.HttpClient(), credentials).WithLicense(new List<string>{"us-autocomplete-pro-cloud"})
 			    .BuildUsAutocompleteProApiClient();
 
 			var lookup = new Lookup("1042 W Center");
 			lookup.PreferGeolocation = "none";
 
-			client.Send(lookup);
+			await client.SendAsync(lookup);
 
 			Console.WriteLine("*** Result with no filter ***");
 			Console.WriteLine();
@@ -47,7 +48,7 @@
 			lookup.PreferRatio = 3;
 			lookup.Source = "all";
 
-			client.Send(lookup);
+			await client.SendAsync(lookup);
 
 			var suggestions = lookup.Result;
 

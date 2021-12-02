@@ -2,12 +2,13 @@ namespace Examples
 {
 	using System;
 	using System.Collections.Generic;
-	using SmartyStreets;
+    using System.Threading.Tasks;
+    using SmartyStreets;
 	using SmartyStreets.InternationalAutocompleteApi;
 
     public class InternationalAutocompleteExample
     {
-        public static void Run()
+        public static async Task RunAsync()
 		{
 			// We recommend storing your secret keys in environment variables.
 			var authId = Environment.GetEnvironmentVariable("SMARTY_AUTH_ID");
@@ -16,7 +17,7 @@ namespace Examples
 			// The appropriate license values to be used for your subscriptions
 			// can be found on the Subscriptions page the account dashboard.
 			// https://www.smartystreets.com/docs/cloud/licensing
-			var client = new ClientBuilder(authId, authToken).WithLicense(new List<string>{"international-autocomplete-cloud"})
+			var client = new ClientBuilder(new System.Net.Http.HttpClient(), authId, authToken).WithLicense(new List<string>{"international-autocomplete-cloud"})
 				.BuildInternationalAutocompleteApiClient();
 			
 			// Documentation for input fields can be found at:
@@ -29,7 +30,7 @@ namespace Examples
 				Locality = "Paris",
 			};
 
-			client.Send(lookup);
+			await client.SendAsync(lookup);
 
 			var candidates = lookup.Result;
 			Console.WriteLine();
