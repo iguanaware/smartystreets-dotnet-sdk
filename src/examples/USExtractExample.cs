@@ -1,12 +1,13 @@
 ﻿namespace Examples
 {
 	using System;
-	using SmartyStreets;
+    using System.Threading.Tasks;
+    using SmartyStreets;
 	using SmartyStreets.USExtractApi;
 
 	internal static class USExtractExample
 	{
-		public static void Run()
+		public static async Task RunAsync()
 		{
 			// We recommend storing your secret keys in environment variables.
 			var authId = Environment.GetEnvironmentVariable("SMARTY_AUTH_ID");
@@ -26,7 +27,7 @@
 				AddressesPerLine = 1
 			};
 
-			client.Send(lookup);
+			await client.SendAsync(lookup);
 
 			var result = lookup.Result;
 			var metadata = result.Metadata;

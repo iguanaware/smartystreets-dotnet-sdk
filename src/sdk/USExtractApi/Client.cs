@@ -3,11 +3,12 @@
 	using System;
 	using System.IO;
 	using System.Text;
+    using System.Threading.Tasks;
 
-	/// <summary>
-	///     This client sends lookups to the SmartyStreets US Extract API,
-	///     and attaches the results to the Lookup objects.
-	/// </summary>
+    /// <summary>
+    ///     This client sends lookups to the SmartyStreets US Extract API,
+    ///     and attaches the results to the Lookup objects.
+    /// </summary>
 	public class Client : IUSExtractClient
 	{
 		private readonly ISender sender;
@@ -19,7 +20,7 @@
 			this.serializer = serializer;
 		}
 
-		public void Send(Lookup lookup)
+		public async Task SendAsync(Lookup lookup)
 		{
 			if (lookup == null)
 				throw new ArgumentNullException("lookup");
@@ -28,7 +29,7 @@
 				throw new SmartyException("Client.send() requires a Lookup with the 'text' field set");
 
 			var request = BuildRequest(lookup);
-			var response = this.sender.Send(request);
+			var response = await this.sender.SendAsync(request);
 
 			using (var payloadStream = new MemoryStream(response.Payload))
 			{

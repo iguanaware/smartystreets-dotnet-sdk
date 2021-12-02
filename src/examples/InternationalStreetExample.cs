@@ -2,12 +2,13 @@
 {
 	using System;
 	using System.Collections.Generic;
-	using SmartyStreets;
+    using System.Threading.Tasks;
+    using SmartyStreets;
 	using SmartyStreets.InternationalStreetApi;
 
 	internal static class InternationalStreetExample
 	{
-		public static void Run()
+		public static async Task RunAsync()
 		{
 			// We recommend storing your secret keys in environment variables.
 			var authId = Environment.GetEnvironmentVariable("SMARTY_AUTH_ID");
@@ -36,7 +37,7 @@
 				PostalCode = "02516-050"
 			};
 
-			client.Send(lookup);
+			await client.SendAsync(lookup);
 
 			var candidates = lookup.Result;
 			var firstCandidate = candidates[0];

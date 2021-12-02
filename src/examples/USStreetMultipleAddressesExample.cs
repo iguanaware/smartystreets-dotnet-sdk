@@ -3,12 +3,13 @@
 	using System;
 	using System.Collections.Generic;
 	using System.IO;
-	using SmartyStreets;
+    using System.Threading.Tasks;
+    using SmartyStreets;
 	using SmartyStreets.USStreetApi;
 
 	internal static class USStreetMultipleAddressesExample
 	{
-		public static void Run()
+		public static async Task RunAsync()
 		{
 			// You don't have to store your keys in environment variables, but we recommend it.
 			var authId = Environment.GetEnvironmentVariable("SMARTY_AUTH_ID");
@@ -65,7 +66,7 @@
 				batch.Add(address3);
 				batch.Add(address4);
 
-				client.Send(batch);
+				await client.SendAsync(batch);
 			}
 			catch (BatchFullException)
 			{
