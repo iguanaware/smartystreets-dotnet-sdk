@@ -1,37 +1,33 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
+		<Deterministic>false</Deterministic>
 		<TargetFrameworks>netstandard2.1</TargetFrameworks>
-		<AssemblyName>smartystreets-dotnet-sdk</AssemblyName>
+		<AssemblyName>smartystreets-dotnet-sdk-dm</AssemblyName>
 		<RootNamespace>SmartyStreets</RootNamespace>
-		<Company>SmartyStreets, LLC</Company>
-		<Product>SmartyStreets .NET SDK</Product>
-		<Description>Official SDK for accessing various SmartyStreets APIs</Description>
+		<Company>DarkMatter, LLC</Company>
+		<Product>DarkMatter SmartyStreets .NET SDK</Product>
 		<NeutralLanguage>en-US</NeutralLanguage>
-		<Copyright>Copyright © SmartyStreets, LLC</Copyright>
-		<PackageProjectUrl>https://github.com/smartystreets/smartystreets-dotnet-sdk</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/smartystreets/smartystreets-dotnet-sdk</RepositoryUrl>
 		<SignAssembly>true</SignAssembly>
 		<AssemblyOriginatorKeyFile>sdk.snk</AssemblyOriginatorKeyFile>
 		<OutputType>Library</OutputType>
 		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 		<GenerateDocumentationFile>False</GenerateDocumentationFile>
-		<AssemblyVersion>1.0.0.1</AssemblyVersion>
-		<FileVersion>1.0.0.2021</FileVersion>
+		<AssemblyVersion>1.0.0.0</AssemblyVersion>
+		<FileVersion>1.0.0.0</FileVersion>
+		<ApplicationIcon>favicon.ico</ApplicationIcon>
+		<!-- NUGET -->
+		<PackageId>$(AssembleName)</PackageId>
+		<Version>1.0.1-beta</Version>
+		<Authors>Brian Freeman</Authors>
+		<Title>SmartyStreets API Wrapper (DarkMatter)</Title>
+		<Copyright>Copyright © DarkMatter, LLC</Copyright>
+		<Description>DarkMatter Official SDK for accessing various SmartyStreets APIs. Uses HttpClient and Async. Forked at 8.13.1 https://github.com/smartystreets/smartystreets-dotnet-sdk</Description>
+		<PackageProjectUrl>https://darkmatter2bd@dev.azure.com/darkmatter2bd/MDM/_git/smartystreets-dotnet-sdk</PackageProjectUrl>
+		<RepositoryUrl>https://darkmatter2bd@dev.azure.com/darkmatter2bd/MDM/_git/smartystreets-dotnet-sdk</RepositoryUrl>
+		<PackageIcon>logo.png</PackageIcon>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(CustomVersion)' != ''">
-		<Version>$(CustomVersion)</Version>
-		<AssemblyVersion>$(CustomVersion)</AssemblyVersion>
-		<FileVersion>$(CustomVersion)</FileVersion>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0|AnyCPU'">
-	  <WarningLevel>4</WarningLevel>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0|AnyCPU'">
-	  <WarningLevel>4</WarningLevel>
-	</PropertyGroup>
-	<!-- Conditionally obtain references for the .NET Framework 4.0 target -->
-	<ItemGroup Condition=" '$(TargetFramework)' == 'net40' ">
-
-		<PackageReference Include="Polly" Version="7.2.2" />
+	<ItemGroup>
+		<None Include="nuget\logo.png" Pack="true" PackagePath="\" />
+		<Content Include="favicon.ico" />
 	</ItemGroup>
 </Project>
