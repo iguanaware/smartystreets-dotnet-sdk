@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<Deterministic>false</Deterministic>
-		<TargetFrameworks>netstandard2.1</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0</TargetFrameworks>
 		<AssemblyName>smartystreets-dotnet-sdk-dm</AssemblyName>
 		<RootNamespace>SmartyStreets</RootNamespace>
 		<Company>DarkMatter, LLC</Company>
@@ -17,7 +17,7 @@
 		<ApplicationIcon>favicon.ico</ApplicationIcon>
 		<!-- NUGET -->
 		<PackageId>$(AssembleName)</PackageId>
-		<Version>1.0.1-beta</Version>
+		<Version>1.0.2-beta</Version>
 		<Authors>Brian Freeman</Authors>
 		<Title>SmartyStreets API Wrapper (DarkMatter)</Title>
 		<Copyright>Copyright © DarkMatter, LLC</Copyright>
